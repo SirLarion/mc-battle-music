@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "battle-music",
+	"version": "${version}",
+	"name": "Battle Music",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Miska Tammenpää <miska@tammenpaa.com>"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/SirLarion/mc-battle-music"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/battle-music/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			{
+				"value": "com.sirlarion.battle_music.BattleMusic",
+				"adapter": "kotlin"
+			}
+		]
+	},
+	"mixins": [
+		"battle-music.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.15.7",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*",
+		"fabric-language-kotlin": ">=1.9.23"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
