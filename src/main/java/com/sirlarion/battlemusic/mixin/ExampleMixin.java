@@ -1,4 +1,4 @@
-package com.sirlarion.battle_music.mixin;
+package com.sirlarion.battlemusic.mixin;
 
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;

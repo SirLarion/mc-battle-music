@@ -1,9 +1,10 @@
-package com.sirlarion.battle_music;
+package com.sirlarion.battlemusic;
 
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.fabricmc.api.ModInitializer
 import net.minecraft.util.Identifier
 import net.minecraft.registry.Registry
@@ -17,11 +18,10 @@ import net.minecraft.client.MinecraftClient
 import org.slf4j.LoggerFactory;
 import com.mojang.brigadier.tree.LiteralCommandNode
 
-import com.sirlarion.battle_music.MusicManager
+import com.sirlarion.battlemusic.MusicManager
 
 object BattleMusic : ModInitializer {
   public val MOD_ID = "battle-music"
-
 
   private val logger = LoggerFactory.getLogger(MOD_ID)
 
@@ -30,27 +30,11 @@ object BattleMusic : ModInitializer {
 
     MusicManager.init()
 
-    CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback { dispatcher, _, _ ->
-      val battleNode = CommandManager
-        .literal("battle")
-        .build()
-
-      val horseNode = CommandManager.literal("horse")
-        .executes { _ ->
-          MusicManager.play(Music.HORSE)
-          1
-        }.build()
-
-      val pizzaNode = CommandManager.literal("pizzahut")
-        .executes { _ ->
-          MusicManager.play(Music.PIZZA)
-          1
-        }.build()
-
-      dispatcher.getRoot().addChild(battleNode)
-      battleNode.addChild(horseNode)
-      battleNode.addChild(pizzaNode)
-
-    })
+    ServerLivingEntityEvents.ALLOW_DAMAGE.register { entity, _, _ ->  
+      if (entity.isPlayer()) {
+        MusicManager.play(Music.HORSE)
+      }
+      true
+    }
 	}
 }
