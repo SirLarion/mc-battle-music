@@ -1,0 +1,18 @@
+{
+  "horse": {
+    "sounds": [
+      {
+        "name": "battle-music:horse",
+        "stream": true
+      }
+    ]
+  },
+  "pizzahut": {
+    "sounds": [
+      {
+        "name": "battle-music:pizzahut",
+        "stream": true
+      }
+    ]
+  }
+}
