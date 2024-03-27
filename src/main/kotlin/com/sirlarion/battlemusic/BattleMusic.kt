@@ -2,6 +2,7 @@ package com.sirlarion.battlemusic;
 
 import java.util.LinkedList
 import kotlin.random.Random
+import kotlin.collections.mutableListOf
 
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
@@ -31,11 +32,27 @@ import com.sirlarion.battlemusic.util.*
 import com.sirlarion.battlemusic.MonsterTracker
 
 object BattleMusic : ModInitializer {
-  var isBattle = false
+  private var isBattle = false
 
-  private var ticksUntilMusicStart = -1
-  private var ticksUntilMusicEnd = -1
+  private var ticksUntilBattleStart = -1
+  private var ticksUntilBattleEnd = -1
 
+  fun getBattleLifecycleMessages(): List<Text> {
+    val msgs: MutableList<Text> = mutableListOf()
+    if (isBattle) {
+      msgs.add(Text.of("Battle in progress: YES"))
+      if(ticksUntilBattleStart != -1) {
+        msgs.add(Text.of("Ticks until battle music: ${ticksUntilBattleStart}"))
+      }
+      if(ticksUntilBattleEnd != -1) {
+        msgs.add(Text.of("Ticks until battle end: ${ticksUntilBattleEnd}"))
+      }
+    } else {
+      msgs.add(Text.of("Battle in progress: NO"))
+    }
+
+    return msgs.toList()
+  }
 	override fun onInitialize() {
 		LOGGER.info("Initializing ${MOD_ID}")
 
@@ -45,14 +62,14 @@ object BattleMusic : ModInitializer {
 
     ClientTickEvents.END_CLIENT_TICK.register { _ -> 
       if (isBattle) {
-        if (ticksUntilMusicStart == 0) MusicManager.play()
-        if (ticksUntilMusicStart > -1) ticksUntilMusicStart -= 1
+        if (ticksUntilBattleStart == 0) MusicManager.play()
+        if (ticksUntilBattleStart > -1) ticksUntilBattleStart -= 1
 
-        if (ticksUntilMusicEnd == 0) {
+        if (ticksUntilBattleEnd == 0) {
           MusicManager.stop()
           isBattle = false
         }
-        if (ticksUntilMusicEnd > -1) ticksUntilMusicEnd -= 1
+        if (ticksUntilBattleEnd > -1) ticksUntilBattleEnd -= 1
       }
     }
 
@@ -63,13 +80,13 @@ object BattleMusic : ModInitializer {
             queueBattleStart()
           }
         }
-        else if (ticksUntilMusicEnd != -1) ticksUntilMusicEnd = -1
+        else if (ticksUntilBattleEnd != -1) ticksUntilBattleEnd = -1
       }
       true
     }
 	}
 
-  private fun hasRequirementsForBattle(player: PlayerEntity, damage: Float = 0.0f): Boolean {
+  fun hasRequirementsForBattle(player: PlayerEntity, damage: Float = 0.0f): Boolean {
     val healthBelowThreshold = (player.health - damage) / player.maxHealth <= HEALTH_BATTLE_THRESHOLD
     val enoughMonsters = MonsterTracker.hasEnoughMonsters(player)
 
@@ -78,11 +95,11 @@ object BattleMusic : ModInitializer {
 
   private fun queueBattleStart() {
     isBattle = true
-    ticksUntilMusicStart = Random.nextInt(15, 45)
-    ticksUntilMusicEnd = -1
+    ticksUntilBattleStart = Random.nextInt(15, 45)
+    ticksUntilBattleEnd = -1
   }
 
   fun queueBattleEnd() {
-    ticksUntilMusicEnd = Random.nextInt(100, 200)
+    if(ticksUntilBattleEnd == -1) ticksUntilBattleEnd = Random.nextInt(100, 200)
   }
 }

@@ -43,7 +43,6 @@ object MusicManager {
 
   fun stop() {
     val player = MinecraftClient.getInstance().musicTracker
-    BattleMusic.isBattle = false
     player.stop()
   }
 }

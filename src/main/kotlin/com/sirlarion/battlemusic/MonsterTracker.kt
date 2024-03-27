@@ -18,7 +18,7 @@ object MonsterTracker {
   fun init() {
     EntityTrackingEvents.START_TRACKING.register { entity, player -> 
       if(entity is LivingEntity && entity is Monster) {
-        LOGGER.info("Tracking ${entity.name} for ${player.name}")
+        LOGGER.debug("Tracking ${entity.name} for ${player.name}")
         val arr = monstersByPlayer.get(player.id)
         if(arr != null) {
           arr.add(entity)
@@ -30,10 +30,13 @@ object MonsterTracker {
 
     EntityTrackingEvents.STOP_TRACKING.register { entity, player -> 
       if(entity is LivingEntity && entity is Monster) {
-        LOGGER.info("Stopping tracking ${entity.name} for ${player.name}")
+        LOGGER.debug("Stopping tracking ${entity.name} for ${player.name}")
         val arr = monstersByPlayer.get(player.id)
         if(arr != null) {
           arr.remove(entity)
+        }
+        if(!BattleMusic.hasRequirementsForBattle(player)) {
+          BattleMusic.queueBattleEnd()
         }
       }
     }

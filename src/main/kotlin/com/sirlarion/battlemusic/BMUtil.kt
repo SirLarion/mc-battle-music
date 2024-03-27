@@ -55,12 +55,12 @@ object CommandConfig {
         .executes { context -> 
           val player = context.source.player ?: return@executes 0 
 
-          val battleStatus = if (BattleMusic.isBattle) "YES" else "NO"
+          val lifecycleMessages = BattleMusic.getBattleLifecycleMessages()
           val healthPercent = (player.health / player.maxHealth) * 100 
           val nearbyMonsters = MonsterTracker.getNearbyMonsters(player).size
           val angryMonsters = MonsterTracker.getAngryMonsters(player).size
 
-          player.sendMessage(Text.of("Battle in progress: ${battleStatus}"))
+          lifecycleMessages.forEach { msg -> player.sendMessage(msg) }
           player.sendMessage(Text.of("Health: ${healthPercent}%, Threshold: ${HEALTH_BATTLE_THRESHOLD * 100}%"))
           player.sendMessage(Text.of("Monsters nearby: ${nearbyMonsters}, Threshold: ${MONSTER_COUNT_THRESHOLD}"))
           player.sendMessage(Text.of("Monsters angry: ${angryMonsters}, Threshold: ${ANGRY_COUNT_THRESHOLD}"))
